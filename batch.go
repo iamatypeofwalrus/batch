@@ -121,8 +121,8 @@ func (b *Batch) log(v ...interface{}) {
 	}
 }
 
-func parseBatchRequests(boundaryKey string, body io.Reader) ([]*Request, error) {
-	requests := make([]*Request, 0)
+func parseBatchRequests(boundaryKey string, body io.Reader) ([]*request, error) {
+	requests := make([]*request, 0)
 	mr := multipart.NewReader(body, boundaryKey)
 	for {
 		p, err := mr.NextPart()
@@ -187,9 +187,9 @@ func parseBatchRequests(boundaryKey string, body io.Reader) ([]*Request, error) 
 		}
 		httpReq.URL = url
 
-		req := &Request{
-			ContentID: id,
-			Request:   httpReq,
+		req := &request{
+			contentID: id,
+			request:   httpReq,
 		}
 
 		requests = append(requests, req)
@@ -202,22 +202,22 @@ func parseBatchRequests(boundaryKey string, body io.Reader) ([]*Request, error) 
 	return requests, nil
 }
 
-func performHTTPRequests(doer HTTPClient, requests []*Request) []*Response {
-	respChan := make(chan *Response, len(requests))
+func performHTTPRequests(doer HTTPClient, requests []*request) []*response {
+	respChan := make(chan *response, len(requests))
 
 	for _, req := range requests {
-		go func(req *Request, ch chan *Response) {
-			httpResp, err := http.DefaultClient.Do(req.Request)
-			resp := &Response{
-				ContentID: req.ContentID,
-				Response:  httpResp,
-				Error:     err,
+		go func(req *request, ch chan *response) {
+			httpResp, err := http.DefaultClient.Do(req.request)
+			resp := &response{
+				contentID: req.contentID,
+				response:  httpResp,
+				err:       err,
 			}
 			ch <- resp
 		}(req, respChan)
 	}
 
-	responses := make([]*Response, 0, len(requests))
+	responses := make([]*response, 0, len(requests))
 
 	// TODO rather than range for requests wait on a channel until we're done
 	for range requests {
@@ -229,7 +229,7 @@ func performHTTPRequests(doer HTTPClient, requests []*Request) []*Response {
 	return responses
 }
 
-func generateResponseBody(w io.Writer, boundary string, responses []*Response) error {
+func generateResponseBody(w io.Writer, boundary string, responses []*response) error {
 	mw := multipart.NewWriter(w)
 	mw.SetBoundary(boundary)
 
@@ -237,7 +237,7 @@ func generateResponseBody(w io.Writer, boundary string, responses []*Response) e
 		h := make(textproto.MIMEHeader)
 		h.Set(headerContentType, contentTypeHTTP)
 		h.Set(headerContentTransferEncoding, contentTransferEncoding)
-		h.Set(headerInReplyTo, resp.ContentID)
+		h.Set(headerInReplyTo, resp.contentID)
 
 		part, err := mw.CreatePart(h)
 		if err != nil {
@@ -249,21 +249,21 @@ func generateResponseBody(w io.Writer, boundary string, responses []*Response) e
 		// errors would be surfaced in the HTTP response headers and body.
 		//
 		// Given that we're assuming that the request itself was bad.
-		if resp.Error != nil {
-			resp.Response = &http.Response{
+		if resp.err != nil {
+			resp.response = &http.Response{
 				Status:        badRequest,
 				StatusCode:    http.StatusBadRequest,
 				Proto:         "HTTP/1.1",
 				ProtoMajor:    1,
 				ProtoMinor:    1,
-				Body:          ioutil.NopCloser(bytes.NewBufferString(resp.Error.Error())),
-				ContentLength: int64(len(resp.Error.Error())),
+				Body:          ioutil.NopCloser(bytes.NewBufferString(resp.err.Error())),
+				ContentLength: int64(len(resp.err.Error())),
 				Request:       &http.Request{},
 				Header:        make(http.Header, 0),
 			}
 		}
 
-		err = resp.Response.Write(part)
+		err = resp.response.Write(part)
 		if err != nil {
 			return err
 		}
