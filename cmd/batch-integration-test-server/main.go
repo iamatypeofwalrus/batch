@@ -10,7 +10,11 @@ import (
 
 func main() {
 	l := log.New(os.Stdout, "", log.LstdFlags)
-	b := batch.New(l, nil)
+	b := &batch.Batch{
+		Log:    l,
+		Client: http.DefaultClient,
+	}
+
 	http.HandleFunc("/batch", b.ServeHTTP)
 
 	log.Println("listening on :8080")

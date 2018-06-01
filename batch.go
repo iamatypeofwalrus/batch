@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"io"
 	"io/ioutil"
-	"log"
 	"mime"
 	"mime/multipart"
 	"net/http"
@@ -37,16 +36,9 @@ const (
 	split = ";"
 )
 
-// New returns an initialized Batch struct. If client is nil then http.DefaultClient is used
-func New(l Logger, client HTTPClient) *Batch {
-	if client == nil {
-		client = http.DefaultClient
-	}
-
-	return &Batch{
-		Log:    l,
-		Client: client,
-	}
+// New returns an initialized Batch struct
+func New() *Batch {
+	return &Batch{Client: http.DefaultClient}
 }
 
 // Batch conforms to the http.Handler interface and can be used natively or with the HandlerFunc
@@ -115,12 +107,18 @@ func (b *Batch) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 	err = generateResponseBody(&body, boundary, responses)
 	if err != nil {
 		http.Error(w, "something went wrong while processing the batch request", http.StatusInternalServerError)
-		log.Println("encountered an error while processing batch request:", err.Error())
+		b.log("encountered an error while processing batch request:", err.Error())
 		return
 	}
 
 	w.WriteHeader(http.StatusOK)
 	w.Write(body.Bytes())
+}
+
+func (b *Batch) log(v ...interface{}) {
+	if b.Log != nil {
+		b.Log.Print(v...)
+	}
 }
 
 func parseBatchRequests(boundaryKey string, body io.Reader) ([]*Request, error) {
