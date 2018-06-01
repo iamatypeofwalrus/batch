@@ -36,7 +36,7 @@ const (
 	split = ";"
 )
 
-// New returns an initialized Batch struct
+// New returns an initialized Batch struct that uses the http.DefaultClient
 func New() *Batch {
 	return &Batch{Client: http.DefaultClient}
 }
