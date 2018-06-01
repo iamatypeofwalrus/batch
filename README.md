@@ -1,3 +1,5 @@
+[![GoDoc](https://godoc.org/github.com/iamatypeofwalrus/batch?status.svg)](https://godoc.org/github.com/iamatypeofwalrus/batch)
+[![Go Report Card](https://goreportcard.com/badge/github.com/iamatypeofwalrus/batch)](https://goreportcard.com/report/github.com/iamatypeofwalrus/batch)
 # Batch
 
 Batch is a simple Go library for handling multipart batch requests. It adheres to the [HTTP Multipart Batched Request Format draft spec](https://tools.ietf.org/id/draft-snell-http-batch-00.html).
