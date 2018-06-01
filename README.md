@@ -1,3 +1,4 @@
+[![Build Status](https://codebuild.us-west-2.amazonaws.com/badges?uuid=eyJlbmNyeXB0ZWREYXRhIjoicVhVc05mSW4xeW1vVzdadEk4VG1ldFFzUHFKekNjeUdXOHF6enVianRYNXMrZ01oamxuZHBWTnQvYmp0ay9lQzdzUU5sMkxhWUlqVjZwODRZcVFXeGZNPSIsIml2UGFyYW1ldGVyU3BlYyI6IjkvT3FtOTJGbnd3NEs3a3IiLCJtYXRlcmlhbFNldFNlcmlhbCI6MX0%3D&branch=master)](https://codebuild.us-west-2.amazonaws.com/badges?uuid=eyJlbmNyeXB0ZWREYXRhIjoicVhVc05mSW4xeW1vVzdadEk4VG1ldFFzUHFKekNjeUdXOHF6enVianRYNXMrZ01oamxuZHBWTnQvYmp0ay9lQzdzUU5sMkxhWUlqVjZwODRZcVFXeGZNPSIsIml2UGFyYW1ldGVyU3BlYyI6IjkvT3FtOTJGbnd3NEs3a3IiLCJtYXRlcmlhbFNldFNlcmlhbCI6MX0%3D&branch=master)
 [![GoDoc](https://godoc.org/github.com/iamatypeofwalrus/batch?status.svg)](https://godoc.org/github.com/iamatypeofwalrus/batch)
 [![Go Report Card](https://goreportcard.com/badge/github.com/iamatypeofwalrus/batch)](https://goreportcard.com/report/github.com/iamatypeofwalrus/batch)
 # Batch
