@@ -7,7 +7,7 @@ The draft spec is not well specified when it comes to whether or not upstream re
 
 By default all requests made by Batch use `http`. However, individual requests can set the `x-use-https` header in the Multipart/Batch message to use `https`.
 
-Here's a complete example of a Batch request where the batch message 
+Here's a complete example of a Batch request where the batch message uses the `x-use-https` header.
 
 ```
 POST / HTTP/1.1
